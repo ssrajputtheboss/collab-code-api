@@ -11,7 +11,7 @@ import { JwtSocketController } from "./socketcontrollers";
 // Initialization
 const app = express();
 const server = createServer(app);
-export const io = new Server(server , { cors : { origin : '*' } } );
+export const io = new Server(server, { cors : { origin : '*' } } );
 dbInit();
 console.log(ADMIN_JWT);
 //process.on('uncaughtException',()=> console.log('Exception Occured'));

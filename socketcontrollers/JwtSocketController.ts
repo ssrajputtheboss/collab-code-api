@@ -13,7 +13,6 @@ export class JwtSocketController{
 
     public static async verify( e: any[] , next : (err?: ExtendedError | undefined) => void){
         const ename : string = e[0];
-        console.log(e);
         if(['create','join'].includes(ename)) next();
         else{
             const { token ,roomName } : {token : string |undefined , roomName : string | undefined} = e[1];

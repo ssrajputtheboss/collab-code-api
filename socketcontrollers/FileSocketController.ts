@@ -4,7 +4,6 @@ import { join } from 'path';
 import { Verifier } from '../utils';
 import { Socket } from 'socket.io';
 import { FileData } from '../models';
-import { io} from '../app';
 
 export class FileSocketController{
 
@@ -26,12 +25,17 @@ export class FileSocketController{
                     content = '';
                     fs.writeFileSync(join( FILES_PATH, roomName , fname) , ''  );
                 }
-                io.to(roomName).emit('createfile-res',
+                socket.broadcast.to(roomName).emit('createfile-res',
                 { 
                     message : 'success',
                     files : FileSocketController.allFilesData(roomName)
                 });
-                console.log(socket.rooms);
+                //new
+                socket.emit('createfile-res',
+                { 
+                    message : 'success',
+                    files : FileSocketController.allFilesData(roomName)
+                });
             }else
                 socket.emit('createfile-res',{ message : 'Invalid extention' });
         });
@@ -40,10 +44,10 @@ export class FileSocketController{
     public static update(socket : Socket){
         socket.on('updatefile',(data:any)=>{
             const { roomName, fname ,content } = data;
-            if(!(roomName && fname && content)) return socket.emit('updatefile-res',{ message :"Invalid Credentials" });
+            if(!(roomName && fname && content!==undefined)) return socket.emit('updatefile-res',{ message :"Invalid Credentials" });
             if(Verifier.isFile(fname)){
                 fs.writeFileSync( join( FILES_PATH, roomName , fname) , content );
-                io.to(roomName).emit('updatefile-res',
+                socket.broadcast.to(roomName).emit('updatefile-res',
                 { 
                     message : 'success',
                     fname : fname ,
@@ -53,6 +57,23 @@ export class FileSocketController{
                 socket.emit('updatefile-res',{ message : 'Invalid extention' });
         })
     }
+
+    public static forward(socket : Socket){
+        socket.on('forward',(data:any)=>{
+            const { roomName, fname , change} = data;
+            if(!(roomName && fname && change)) return socket.emit('forward-res',{ message :"Invalid Credentials" });
+            if(Verifier.isFile(fname)){
+                socket.broadcast.to(roomName).emit('forward-res',
+                { 
+                    message : 'success',
+                    fname : fname ,
+                    change : change
+                });
+            }else
+                socket.emit('forward-res',{ message : 'Invalid extention' });
+        })
+    }
+
 
     public static delete(socket : Socket){
         socket.on('delete',(data:any)=>{
@@ -64,7 +85,7 @@ export class FileSocketController{
                 file:string ) => fs.unlinkSync(join(FILES_PATH,roomName,file)
             ));
             fs.rmdirSync(join(FILES_PATH,roomName));
-            io.to(roomName).emit('delete-res',
+            socket.broadcast.to(roomName).emit('delete-res',
             {
                 message : 'success' ,
                 fname : '*'

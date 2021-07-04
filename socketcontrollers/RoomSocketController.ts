@@ -37,7 +37,9 @@ export class RoomSocketController{
                         message : 'success'
                     });
                     socket.join([authData.roomName]);
-                    io.to(authData.roomName).emit('userlist',{users:[authData.userName]});
+                    socket.broadcast.to(authData.roomName).emit('userlist',{users:[authData.userName]});
+                    //new
+                    socket.emit('userlist',{users:[authData.userName]});
                 }
             }else{
                 socket.emit('create-res',{ message :'Cannot create room invalid credentials'  });
@@ -59,7 +61,11 @@ export class RoomSocketController{
                 room.users = [ { userName : authData.userName , userId : userId } , ...room.users ];
                 room.save();
                 socket.join([authData.roomName]);
-                io.to(authData.roomName).emit('userlist',
+                socket.broadcast.to(authData.roomName).emit('userlist',
+                    {users : room.users.map((e:{userName : string , userId : string})=>e.userName)}
+                );
+                //new
+                socket.emit('userlist',
                     {users : room.users.map((e:{userName : string , userId : string})=>e.userName)}
                 );
                 socket.emit('join-res',{
@@ -88,14 +94,14 @@ export class RoomSocketController{
                     RoomSchema.deleteOne({
                         roomName : roomName
                     });
-                    io.to(roomName).emit('userlist',{users : []});
+                    socket.broadcast.to(roomName).emit('userlist',{users : []});
                     socket.leave(roomName);
                     socket.emit('leave-res',{ message : 'success' });
                 }else{
                     room.users = room.users.filter(
                         (e:{userName : string , userId : string})=>(e.userId !== userId));
                     room.save();
-                    io.to(roomName).emit('userlist',
+                    socket.broadcast.to(roomName).emit('userlist',
                         {users : room.users.map((e:{userName : string , userId : string})=>e.userName) }
                     );
                     socket.leave(roomName);

@@ -23,6 +23,8 @@ export const socketEventHandler = (socket : Socket)=>{
 
     FileSocketController.update(socket);
 
+    FileSocketController.forward(socket);
+
     FileSocketController.deleteFile(socket);
 
     socket.on('disconnect' , ()=>{
