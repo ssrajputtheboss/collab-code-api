@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import { FileSocketController, JwtSocketController, RoomSocketController } from "../socketcontrollers";
 import { io } from "../app";
+import { RunnerSocketController } from "../socketcontrollers/RunnerSocketController";
 
 export const socketEventHandler = (socket : Socket)=>{
 
@@ -24,6 +25,8 @@ export const socketEventHandler = (socket : Socket)=>{
     FileSocketController.update(socket);
 
     FileSocketController.forward(socket);
+
+    RunnerSocketController.run(socket);
 
     FileSocketController.deleteFile(socket);
 
