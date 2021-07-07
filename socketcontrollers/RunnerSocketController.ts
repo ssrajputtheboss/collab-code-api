@@ -10,8 +10,7 @@ export class RunnerSocketController{
         
         socket.on('run',(data:any)=>{
             const { roomName,fname,input } = data;
-            console.log(data);
-            if(fname && input && roomName){
+            if(fname && input!==undefined && roomName){
                 if(!Verifier.isFile(fname))
                     socket.emit('run-res',{
                         message : 'Invalid extention',
@@ -19,8 +18,10 @@ export class RunnerSocketController{
                     });
                 const ext = FILE_EXTENSIONS.filter((e)=>fname.endsWith(e))[0].toLowerCase();
                 let executor : typeof c | typeof java | typeof python | typeof cpp|null;
+                let cpath : undefined|string;
                 switch(ext){
                     case '.py':
+                        cpath='python3';
                         executor=python;break;
                     case '.java':
                         executor=java;break;
@@ -40,7 +41,8 @@ export class RunnerSocketController{
                     const p = executor.runFile(join(FILES_PATH,roomName,fname),
                     {
                         stdin: input,
-                        timeout: PROCESS_TIMEOUT
+                        timeout: PROCESS_TIMEOUT,
+                        executionPath: cpath
                     }
                     );
                     p.then(result=>socket.emit('run-res',{

@@ -19,4 +19,4 @@ export const FILES_PATH = __dirname.replace(/config$/i ,'files');
 
 export const SNIPPET_PATH = __dirname.replace(/config$/i ,'snippets');
 
-export const PROCESS_TIMEOUT = 5 * 1000;
+export const PROCESS_TIMEOUT = 8 * 1000;

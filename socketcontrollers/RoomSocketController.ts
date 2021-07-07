@@ -31,7 +31,6 @@ export class RoomSocketController{
                         pass : await CryptoController.encode(authData.password) ,
                         users : [ { userName : authData.userName , userId : userId } ]
                     });
-                    console.log('creating room');
                     socket.emit('create-res',{ 
                         jwt : JwtSocketController.create({roomName : authData.roomName }) ,
                         message : 'success'

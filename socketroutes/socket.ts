@@ -5,8 +5,6 @@ import { RunnerSocketController } from "../socketcontrollers/RunnerSocketControl
 
 export const socketEventHandler = (socket : Socket)=>{
 
-    console.log('user connected');
-
     socket.use(JwtSocketController.verify);
 
     socket.once('test',(data:any)=>{
