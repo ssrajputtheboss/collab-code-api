@@ -1,7 +1,7 @@
 import { RoomAuthData, RoomCreateResponse } from "../models";
 import { Verifier } from "../utils";
 import { CryptoController } from "../controller";
-import RoomSchema from '../models/db';
+import { RoomSchema } from '../models';
 import { Socket } from "socket.io";
 import { JwtSocketController } from "./JwtSocketController";
 import { FileSocketController } from "./FileSocketController";
@@ -90,12 +90,13 @@ export class RoomSocketController{
                 });
                 if(userId === room.admin){
                     RoomSocketController.allRoomNames.splice(RoomSocketController.allRoomNames.indexOf(roomName));
-                    RoomSchema.deleteOne({
+                    RoomSchema.deleteMany({
                         roomName : roomName
-                    });
-                    socket.broadcast.to(roomName).emit('userlist',{users : []});
+                    },(err)=>{if(err)console.log(err)});
+                    FileSocketController.delete(data);
+                    socket.broadcast.to(roomName).emit('leave-res',{message:'success'});
                     socket.leave(roomName);
-                    socket.emit('leave-res',{ message : 'success' });
+                    socket.emit('leave-res',{ message : 'success'});
                 }else{
                     room.users = room.users.filter(
                         (e:{userName : string , userId : string})=>(e.userId !== userId));
@@ -104,7 +105,7 @@ export class RoomSocketController{
                         {users : room.users.map((e:{userName : string , userId : string})=>e.userName) }
                     );
                     socket.leave(roomName);
-                    socket.emit('leave-res',{ message : 'success' });
+                    socket.emit('leave-res',{ message : 'success'});
                 }
             }else 
                 socket.emit('leave-res' ,{ message : 'Invalid Credentials'});

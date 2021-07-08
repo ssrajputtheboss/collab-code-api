@@ -1,8 +1,17 @@
-import { FILES_PATH, FILE_EXTENSIONS, PROCESS_TIMEOUT } from "../config";
+import { 
+    FILES_PATH, 
+    FILE_EXTENSIONS, 
+    PROCESS_TIMEOUT, 
+    JAVA_BLOCKLIST, 
+    PYTHON_BLOCKLIST, 
+    C_BLOCKLIST, 
+    CPP_BLOCKLIST
+} from "../config";
 import { Verifier } from "../utils";
 import { Socket } from 'socket.io';
 import { join } from 'path';
 import { c, cpp, java , python } from "compile-run";
+import { FileSocketController } from "./FileSocketController";
 
 export class RunnerSocketController{
 
@@ -19,15 +28,45 @@ export class RunnerSocketController{
                 const ext = FILE_EXTENSIONS.filter((e)=>fname.endsWith(e))[0].toLowerCase();
                 let executor : typeof c | typeof java | typeof python | typeof cpp|null;
                 let cpath : undefined|string;
+                const content = FileSocketController.readContent(roomName,fname);
+                let msg:string='';
                 switch(ext){
                     case '.py':
+                        msg = RunnerSocketController.pyCheck(content)
+                        if(msg){
+                            socket.emit('run-res',{
+                                message : msg
+                            })
+                            return;
+                        }
                         cpath='python3';
                         executor=python;break;
                     case '.java':
+                        msg = RunnerSocketController.javaCheck(content)
+                        if(msg){
+                            socket.emit('run-res',{
+                                message : msg
+                            })
+                            return;
+                        }
                         executor=java;break;
                     case '.cpp':
+                        msg = RunnerSocketController.cppCheck(content)
+                        if(msg){
+                            socket.emit('run-res',{
+                                message : msg
+                            })
+                            return;
+                        }
                         executor=cpp;break;
                     case '.c':
+                        msg = RunnerSocketController.cCheck(content)
+                        if(msg){
+                            socket.emit('run-res',{
+                                message : msg
+                            })
+                            return;
+                        }
                         executor=c;break;
                     default:
                         executor = null;
@@ -59,5 +98,49 @@ export class RunnerSocketController{
                 socket.emit('run-res',{message:'Invalid credentials'});
             }
         });
+    }
+
+    public static cCheck(code:string):string{
+        const m = code.match(/[a-zA-Z_]+/g);
+        if(m){
+            for( let s of C_BLOCKLIST){
+                if(m.includes(s))
+                    return `Use of ${s} is not allowed , remove and try again!`;
+            }
+        }
+        return '';
+    }
+    
+    public static cppCheck(code:string):string{
+        const m = code.match(/[a-zA-Z_]+/g);
+        if(m){
+            for( let s of CPP_BLOCKLIST){
+                if(m.includes(s))
+                    return `Use of ${s} is not allowed , remove and try again!`;
+            }
+        }
+        return '';
+    }
+
+    public static javaCheck(code:string):string{
+        const m = code.match(/[a-zA-Z_\.]+/g);
+        if(m){
+            for( let s of JAVA_BLOCKLIST){
+                if(m.find(e=>e.toString().match(new RegExp(`.*${s.replace('.','\s*\.\s*')}.*`))))
+                    return `Use of ${s} is not allowed , remove and try again!`;
+            }
+        }
+        return '';
+    }
+
+    public static pyCheck(code:string):string{
+        const m = code.match(/[a-zA-Z_]+/g);
+        if(m){
+            for( let s of PYTHON_BLOCKLIST){
+                if(m.includes(s))
+                    return `Use of ${s} is not allowed , remove and try again!`;
+            }
+        }
+        return '';
     }
 }

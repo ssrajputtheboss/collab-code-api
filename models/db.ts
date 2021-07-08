@@ -11,4 +11,4 @@ const roomSchema = new Schema({
     }
 });
 
-export default model('RoomSchema', roomSchema);
+export const RoomSchema = model('RoomSchema', roomSchema);

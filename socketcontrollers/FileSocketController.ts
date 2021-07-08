@@ -75,22 +75,15 @@ export class FileSocketController{
     }
 
 
-    public static delete(socket : Socket){
-        socket.on('delete',(data:any)=>{
+    public static delete(data:any){
             const { roomName } = data;
-            if(!(roomName)) return socket.emit('delete-res',{ message :"Invalid Credentials" });
-            if(!fs.existsSync(join(FILES_PATH,roomName))) return socket.emit('delete-res',{ message :"File doesn\'t exists" });
+            if(!(roomName)) return;
+            if(!fs.existsSync(join(FILES_PATH,roomName))) return;
             const files = fs.readdirSync(join(FILES_PATH,roomName));
             files.forEach(( 
                 file:string ) => fs.unlinkSync(join(FILES_PATH,roomName,file)
             ));
             fs.rmdirSync(join(FILES_PATH,roomName));
-            socket.broadcast.to(roomName).emit('delete-res',
-            {
-                message : 'success' ,
-                fname : '*'
-            })
-        });
     }
 
 
@@ -121,5 +114,9 @@ export class FileSocketController{
             });
         });
         return arr;
+    }
+
+    public static readContent(roomName:string,fname:string):string{
+        return fs.readFileSync(join(FILES_PATH,roomName,fname)).toString();
     }
 }
