@@ -18,9 +18,9 @@ export class FileSocketController{
                     return socket.emit('createfile-res',{ message : 'File Already exists'});
                 var content : string = '';
                 if(snippetName){
-                    const data = fs.readFileSync(join(SNIPPET_PATH,snippetName));
-                    content = data.toString();
-                    fs.writeFileSync(join( FILES_PATH, roomName , fname) , data );
+                    const d = fs.readFileSync(join(SNIPPET_PATH,snippetName));
+                    content = d.toString();
+                    fs.writeFileSync(join( FILES_PATH, roomName , fname) , d );
                 }else{
                     content = '';
                     fs.writeFileSync(join( FILES_PATH, roomName , fname) , ''  );
@@ -88,7 +88,7 @@ export class FileSocketController{
 
 
     public static deleteFile(socket : Socket){
-        socket.on('deletefile',(data)=>{
+        socket.on('deletefile',(data:any)=>{
             const { roomName, fname } = data;
             if(!( roomName && fname )) return socket.emit('deletefile-res',{ message :"Invalid Credentials" });
             if(fs.existsSync(join( FILES_PATH, roomName, fname))){

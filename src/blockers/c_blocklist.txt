@@ -1,0 +1,9 @@
+FILE
+fopen
+fclose
+fputc
+fputs
+fgetc
+fgets
+fread
+fwrite

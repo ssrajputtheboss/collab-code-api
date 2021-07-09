@@ -88,7 +88,7 @@ export class RunnerSocketController{
                         message : 'success',
                         result: result
                     })
-                    ).catch(err=>socket.broadcast.to(roomName).emit('run-res',{
+                    ).catch((err:any )=>socket.broadcast.to(roomName).emit('run-res',{
                         message : 'Execution Failed',
                         result : {}
                     })
