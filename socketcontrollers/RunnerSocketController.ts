@@ -123,12 +123,9 @@ export class RunnerSocketController{
     }
 
     public static javaCheck(code:string):string{
-        const m = code.match(/[a-zA-Z_\.]+/g);
-        if(m){
-            for( let s of JAVA_BLOCKLIST){
-                if(m.find(e=>e.toString().match(new RegExp(`.*${s.replace('.','\s*\.\s*')}.*`))))
-                    return `Use of ${s} is not allowed , remove and try again!`;
-            }
+        for( let s of JAVA_BLOCKLIST){
+            if(code.match( new RegExp( s.replace('.','\\s*\\.\\s*') ) ))
+                return `Use of ${s} is not allowed , remove and try again!`;
         }
         return '';
     }
