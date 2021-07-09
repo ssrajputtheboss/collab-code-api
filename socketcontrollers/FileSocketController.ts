@@ -53,6 +53,12 @@ export class FileSocketController{
                     fname : fname ,
                     content : content
                 });
+                socket.emit('updatefile-res',
+                { 
+                    message : 'success',
+                    fname : fname ,
+                    content : content
+                });
             }else
                 socket.emit('updatefile-res',{ message : 'Invalid extention' });
         })
