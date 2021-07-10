@@ -63,10 +63,6 @@ export class RoomSocketController{
                 socket.broadcast.to(authData.roomName).emit('userlist',
                     {users : room.users.map((e:{userName : string , userId : string})=>e.userName)}
                 );
-                //new
-                socket.emit('userlist',
-                    {users : room.users.map((e:{userName : string , userId : string})=>e.userName)}
-                );
                 socket.emit('join-res',{
                     message : 'success', 
                     jwt : JwtSocketController.create({roomName : authData.roomName}) ,

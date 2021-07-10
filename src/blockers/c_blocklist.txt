@@ -7,3 +7,8 @@ fgetc
 fgets
 fread
 fwrite
+thread
+stop_token
+mutex
+shared_mutex
+unistd
