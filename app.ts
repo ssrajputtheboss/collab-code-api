@@ -14,8 +14,8 @@ const server = createServer(app);
 export const io = new Server(server, { cors : { origin : '*' } } );
 dbInit();
 console.log(ADMIN_JWT);
-//process.on('uncaughtException',()=> console.log('Exception Occured'));
-//process.on('unhandledRejection',()=> console.log('UnhandledRejection'));
+process.on('uncaughtException',()=> console.log('Exception Occured'));
+process.on('unhandledRejection',()=> console.log('UnhandledRejection'));
 
 // Middlewares
 app.use(cors());

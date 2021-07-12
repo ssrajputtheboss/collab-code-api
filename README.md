@@ -6,6 +6,7 @@ Server side coding for CollabCode web. Docker containerized application running 
     - Dokcerized Application , Easy to host as the server requires dependencies like gcc, g++, jdk8 and python3.
     - Socket.io library supports real-time data share.
     - Supports code execution on server thanks to compile-run library on npm and docker. 
+    - MVC software pattern
 
 - ## Running on your machine ##
     - ```bash
@@ -17,7 +18,7 @@ Server side coding for CollabCode web. Docker containerized application running 
         - SECRET : secret key for encrypting jwt of users
         - DATABASE_URL :your mongodb database url
     - Building Application
-        - Run docker build command if you want to use a containerized application. Use Dockerfile for building image with npm build step or use Dockerfile-old(rename to Dockerfile before use) to build image without npm build step.
+        - Run docker build command if you want to use a containerized application. Use Dockerfile-mid for building image with npm build step or use Dockerfile-old(rename to Dockerfile before use) to build image without npm build step. Use Dockerfile for building minimized image.
             ```bash
             docker build -t your-app-name .
             ```
@@ -27,3 +28,13 @@ Server side coding for CollabCode web. Docker containerized application running 
             yarn build
             yarn start 
             ```
+            
+## Building with Docker ##
+
+There are 3 different dockerfiles each of them has different build size and also update size(update size is when you are making changes to existing image and replacing it with a newer version.). Use of Dockerfile is preffered over Dockerfile-mid and Dockerfile-old , it has both the minimum image size and minimum update size.
+
+| Dockerfile-name | Image size on build | update size |
+| --------------- | ------------------- | ----------- |
+| Dockerfile-old  | ~593mb              | ~400mb      |
+| Dockerfile-mid  | ~502mb              | ~400mb      |
+| Dockerfile      | ~492mb              | ~40mb       |

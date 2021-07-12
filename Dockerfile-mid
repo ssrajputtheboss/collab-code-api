@@ -8,11 +8,14 @@ COPY . .
 RUN npm install
 RUN npm run build
 
-FROM ssrajputtheboss/node-pggj:1.0
+FROM node:14-alpine
 WORKDIR /usr/src/app
 COPY package.json ./
 COPY .env .
 COPY --from=builder /usr/src/app/src .
 RUN npm install --only=production
+RUN apk add --update openjdk8 gcc g++ python3
+ENV JAVA_HOME=/usr/lib/jvm/default-jvm \
+    PATH="/usr/lib/jvm/default-jvm/bin:$PATH"
 EXPOSE 4004:4004
 CMD node app
