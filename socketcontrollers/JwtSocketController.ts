@@ -34,7 +34,7 @@ export class JwtSocketController{
     public static verifyAdmin(socket : Socket , next : (err?: ExtendedError | undefined) => void){
         const token : string | undefined = socket.handshake.headers.authorization;                            
         if(token){
-            jwt.verify( token , ADMIN_SECRET! , (err , data)=>{
+            jwt.verify( token , ADMIN_SECRET! , (err , data:any)=>{
                 if(err){
                     return;
                 }else{

@@ -7,14 +7,11 @@ export const socketEventHandler = (socket : Socket)=>{
 
     socket.use(JwtSocketController.verify);
 
-    socket.once('test',(data:any)=>{
-        const {roomName} = data;
-        io.to(roomName).emit('test-res',{messsage:'success'});
-    });
-    
     RoomSocketController.create(socket);
 
     RoomSocketController.join(socket);
+
+    RoomSocketController.rejoin(socket);
 
     RoomSocketController.leave(socket);
 
